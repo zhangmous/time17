@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+    <!-- 定义切入之后需要做的事的实现类-->
+       <bean id="checkService" class="com.ipr.demo.aopservice.AopService"></bean>
+    <!-- 定义被代理类-->
+        <!--<bean id="hello" class="com.ipr.demo.springservice.SayHelloImpl">
+            <constructor-arg index="0" type="java.lang.String" value="年龄"></constructor-arg>
+            <constructor-arg index="1" type="int" >
+                <value>20</value>
+            </constructor-arg>
+        </bean>-->
+    <!-- AOP-->
+        <aop:config>
+            <aop:pointcut id="service" expression="execution(public * com.ipr.demo.springservice.*.say*(..))"/>
+
+            <aop:aspect ref="checkService" order="1">
+                <aop:after method="check" pointcut-ref="service"/>
+            </aop:aspect>
+
+        </aop:config>
+
+
+        <!--定义拦截后的操作实现类-->
+        <bean id="passAopService" class="com.ipr.demo.aopservice.passaopservice.PassAopService"/>
+        <!--被代理类-->
+        <!--可以配置在另一个xml里面-->
+        <!--Aop-->
+    <aop:config>
+        <aop:pointcut id="passService" expression="execution(public * com.ipr.demo.springservice.*.*(..))"/>
+        <aop:aspect  ref="passAopService" order="1">
+            <aop:around method="pass" pointcut-ref="passService"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
